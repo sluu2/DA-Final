@@ -6,6 +6,8 @@
     <script src="libs/phaser.js"></script>
     <script src="js/boot.js"></script>
     <script src="js/preload.js"></script>
+    <script src="js/titlegen.js"></script>
+    <script src="js/title.js"></script>
     <script src="js/startMenu.js"></script>
     <script src="js/worldgen.js"></script>
     <script src="js/game.js"></script>
@@ -27,6 +29,8 @@
             var game = new Phaser.Game(480, 480, Phaser.AUTO, 'gameContainer');
             game.state.add('boot', DA5Game.boot);
             game.state.add('preload', DA5Game.preload);
+            game.state.add('titlegen', DA5Game.titlegen);
+            game.state.add('title', DA5Game.title);
             game.state.add('startMenu', DA5Game.startMenu);
             game.state.add('worldgen', DA5Game.worldgen);
             game.state.add('game', DA5Game.game);

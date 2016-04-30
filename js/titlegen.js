@@ -1,48 +1,18 @@
-DA5Game.worldgen = function(game) {
+DA5Game.titlegen = function(game) {
     this.ready = false;
 };
 
-DA5Game.worldgen.prototype = {
-	preload: function () {
-
-	},
+DA5Game.titlegen.prototype = {
 
 	create: function () {
         /* ------------------------------ GAME LOGIC VARIABLES ------------------------------ */
         
         /* Player Variables */
-        this.game.speed;
+        this.game.speed =  120;
         this.game.normal = 108;             // Player movement speed on non slowing tiles
         this.game.slow = 80;                // Player movement speed on slowing tiles
         this.game.stop = 0;                 // Stop player movement when interacting
-        
-        // Reset Player Statistics when new game has started
-        if (this.game.playerHealth === 0 || this.game.playerHealth === undefined) {
-            // Player stats reset
-            this.game.playerMaxHealth = 3;
-            this.game.playerMaxHunger = 3;
-            this.game.playerMaxThirst = 3;
-            this.game.playerHealth = 3;
-            this.game.playerHunger = 3;
-            this.game.playerThirst = 3;
-            this.game.resourceCount = 500;
-            
-            // Player items reset
-            this.game.slot1 = 0;
-            this.game.slot2 = 0;
-            this.game.medKit = 0;
-            this.game.pulseRounds = 0;
-            this.game.shieldCount = 0;
-            this.game.hasShield = false;
-            
-            // Day/Event variable reset
-            this.game.light = 1;
-            this.game.day = 1;
-            this.game.dayState = undefined;
-            this.game.randomEvent1 = undefined;
-            this.game.infrared = false;
-            this.game.maxTurrets = 0;
-        }
+        this.game.maxTurrets = 5;
         
         // Drone Patrol Subgroup Move Times
         this.game.moveTime1 = this.rnd.integerInRange(0, 3) * Phaser.Timer.SECOND;
@@ -57,93 +27,20 @@ DA5Game.worldgen.prototype = {
         this.game.fireTime5 = this.rnd.integerInRange(1, 5) * Phaser.Timer.SECOND;
         this.game.fireRate = 3;
         this.game.fireSpeed = 100;
-        
-        /* STANDARD TIMERS */
-        this.game.damageImmuneTime = 2 * Phaser.Timer.SECOND;       // Immunity duration before being able to be damaged by enemy
-        this.game.healthDecay = 5 * Phaser.Timer.SECOND;            // Health Decay Rate if Hunger and/or Thirst is 0
-        this.game.thirstRestoreL = 1 * Phaser.Timer.SECOND;         // Thirst Restore Rate (Lake)
-        this.game.thirstRestoreR = 1.5 * Phaser.Timer.SECOND;       // Thirst Restore Rate (River)
-        this.game.foodRespawn = 5 * Phaser.Timer.SECOND;            // Time before food respawns after inactivity
-        this.game.eventLabelTimer = 1 * Phaser.Timer.SECOND;
-        
-        /* NON TUNABLE VARIABLES */
-        this.game.losingHealth = false;     // Is the player losing health albeit has no hunger or thirst?
-        this.game.interact = false;         // Is the player pressing the interact key?
-        this.game.isSlowed = false;         // Is the player on a slowing tile?
-        this.game.dayCycle = 16 * Phaser.Timer.SECOND;      // Time between each cycle
-        this.game.pulseSpeed = 250;
-        this.game.stunDuration = 5 * Phaser.Timer.SECOND;
-        
-        if (this.game.dayState === undefined || this.game.dayState === 'night'){
-            this.game.dayState = 'day';
-            this.worldSeedCreate();
-        }
-        else
-            this.game.dayState = 'night';
-        
-        this.setEvent();
+        this.worldSeedCreate();
         this.spawningArrayInitialization();
+        
+        this.game.maxFood = 5;
+        this.game.numFood = 5;
+        this.game.maxResource = 5;
+        this.game.maxDrones = 10;
+        this.game.droneSpeed = 50;
 	},
 
 	update: function () {
 	   	this.ready = true;
-        this.state.start('game');
+        this.state.start('title');
 	},
-    
-    setEvent: function() {
-        console.log('Game Day: ' + this.game.day);
-        
-        if (this.game.randomEvent1 === 1 || this.game.randomEvent2 === 1) {         // ABUNDANCE
-            this.game.maxFood = 10;
-            this.game.numFood = 10;
-        }
-        else  if (this.game.randomEvent1 === 2 || this.game.randomEvent2 === 2) {   // FAMINE
-            this.game.maxFood = 3;
-            this.game.numFood = 3;
-        }
-        else {
-            this.game.maxFood = 5;
-            this.game.numFood = 5;
-        }
-        
-        
-        if (this.game.randomEvent1 === 3 || this.game.randomEvent2 === 3)           // SURPLUS
-            this.game.maxResource = 10;
-        else if (this.game.randomEvent1 === 4 || this.game.randomEvent2 === 4)      // SCARCITY
-            this.game.maxResource = 3;
-        else 
-            this.game.maxResource = 5;
-        
-        
-        if (this.game.randomEvent1 === 5 || this.game.randomEvent2 === 5)                       // QUENCH
-            this.game.thirstDecay = 15 * Phaser.Timer.SECOND;
-        else if (this.game.randomEvent1 === 6 || this.game.randomEvent2 === 6)                  // DEHYDRATION
-            this.game.thirstDecay = 8 * Phaser.Timer.SECOND;
-        else
-            this.game.thirstDecay = 10 * Phaser.Timer.SECOND;
-        
-        
-        if (this.game.randomEvent1 === 7 || this.game.randomEvent2 === 7)                           // SATIATION
-            this.game.hungerDecay = 15 * Phaser.Timer.SECOND;
-        else if (this.game.randomEvent1 === 8 || this.game.randomEvent2 === 8)                      // STARVATION
-            this.game.hungerDecay = 8 * Phaser.Timer.SECOND;
-        else
-            this.game.hungerDecay = 10 * Phaser.Timer.SECOND;
-        
-        
-        if (this.game.randomEvent1 === 9 || this.game.randomEvent2 === 9)               // LOW ALERT
-            this.game.maxDrones = 5;
-        else if (this.game.randomEvent1 === 10 || this.game.randomEvent2 === 10)        // HIGH ALERT
-            this.game.maxDrones = 15;
-        else
-            this.game.maxDrones = 10;
-        
-        
-        if (this.game.randomEvent1 === 11 || this.game.randomEvent2 === 11)             // AGILITY
-            this.game.droneSpeed = 75;
-        else
-            this.game.droneSpeed = 50;
-    },
     
     worldSeedCreate: function() {
         //POSITION MULTIPLIER TO BE ABLE TO MAP TILES FOR SPAWNING

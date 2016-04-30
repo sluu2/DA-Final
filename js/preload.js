@@ -11,7 +11,11 @@ DA5Game.preload.prototype = {
 		this.load.setPreloadSprite(this.preloadBar);
         
         /* MENUS START*/
-        this.load.image('titlescreen', 'assets/img/titlescreen.png');
+        this.load.image('title', 'assets/img/title.png');
+        this.load.spritesheet('pressstart', 'assets/img/start.png', 228, 23);
+        this.load.image('blank', 'assets/img/blank.png');
+        this.load.spritesheet('startMenu', 'assets/img/startMenu.png', 480, 480);
+        this.load.image('startMenuControl', 'assets/img/startMenuControl.png', 480, 480);
         this.load.image('demoscreen', 'assets/img/demo.png');
         this.load.spritesheet('craftMenu', 'assets/img/craftMenu.png', 416, 256);
         this.load.spritesheet('supplyPrompt', 'assets/img/supplyPrompt.png', 416, 256);
@@ -52,7 +56,8 @@ DA5Game.preload.prototype = {
         this.load.image('food', 'assets/img/food.png');
         this.load.image('resource', 'assets/img/resource.png');
         this.load.spritesheet('drone', 'assets/img/drone.png', 16, 16);
-        this.load.image('turret', 'assets/img/turret.png');
+        this.load.spritesheet('turret', 'assets/img/turret.png', 24, 24);
+        this.load.image('enemypulse', 'assets/img/enemypulse.png');
         
         // Night State assets
         this.load.image('light1', 'assets/img/light1.png');
@@ -94,7 +99,7 @@ DA5Game.preload.prototype = {
         this.load.image('shielditem', 'assets/img/shielditem.png');
         this.load.image('backpack', 'assets/img/backpack.png');
         this.load.image('picnicbasket', 'assets/img/picnicbasket.png');
-        this.load.image('refridgerator', 'assets/img/refridgerator.png');
+        this.load.image('refrigerator', 'assets/img/refrigerator.png');
         this.load.image('canteen', 'assets/img/canteen.png');
         this.load.image('waterjug', 'assets/img/waterjug.png');
         this.load.image('mushroom', 'assets/img/mushroom.png');
@@ -111,6 +116,6 @@ DA5Game.preload.prototype = {
 
 	update: function () {
 	   	this.ready = true;
-        this.state.start('startMenu');
+        this.state.start('titlegen');
 	}
 };
