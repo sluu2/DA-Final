@@ -29,8 +29,11 @@ DA5Game.game.prototype = {
         this.physics.enable(this.win, Phaser.Physics.ARCADE);
         
         this.initializeHUD();
+        this.dialogueState = false;
+        this.initializeDialogue(this.game.day, this.game.dayState);
         this.initializeState = false;
         this.initializeMenus();
+        
         this.updateInventorySlots();
         this.camera.follow(this.game.player);
         this.quarterCount = 0;
@@ -50,6 +53,7 @@ DA5Game.game.prototype = {
         this.physics.arcade.overlap(this.game.player, this.resource, this.collectResource, null, this);
         this.physics.arcade.overlap(this.game.player, this.supplyItem, this.collectSupplyItem, null, this);
         
+        
         if (this.game.day >= 2) {
             this.physics.arcade.collide(this.drone, this.drone);
             this.physics.arcade.collide(this.drone, this.boundary);
@@ -67,8 +71,21 @@ DA5Game.game.prototype = {
                 this.physics.arcade.collide(this.enemyPulse, this.boundary, this.destroyEnemyPulse, null, this);
             }
         }
+        if (!this.dialogueState){
+            this.movePlayer();
+            this.movePlayerComponents();
+        }
         
-        if (this.game.interact)
+        /* AI */
+        if (this.game.day >= 2) {
+            this.droneTarget();
+            this.dronePatrol();
+        }
+        this.postLogicCheck();
+    },
+    
+    movePlayer: function() {
+        if (this.game.interact || this.supplyState || this.slotState)
             this.game.speed = this.game.stop;
         else if (this.game.isSlowed)
             this.game.speed = this.game.slow;
@@ -88,16 +105,6 @@ DA5Game.game.prototype = {
             this.game.player.body.velocity.y = this.game.speed;
         else 
             this.game.player.body.velocity.y = 0;
-        
-        /* SHOOTING */
-        this.movePlayerComponents();
-        
-        /* AI */
-        if (this.game.day >= 2) {
-            this.droneTarget();
-            this.dronePatrol();
-        }
-        this.postLogicCheck();
     },
     
     GameOver: function() {
@@ -105,12 +112,101 @@ DA5Game.game.prototype = {
     },
     
     /* ---------------------- EXTERNAL HELPER FUNCTIONS BEGIN HERE AND ONWARDS ---------------------- */
+    initializeDialogue: function(dayNumber, dayState){
+        /*
+        1d = 31 frames
+        1n = 16 frames
+        2d = 10 frames
+        3d = 7 frames
+        5d = 6 frames
+        6d = 6 frames
+        7d = 4 frames
+        boss = 8 frames;
+        conclusion = 7 frames */
+        
+        switch (dayNumber){
+            case 1:
+                if (dayState === 'day') {
+                    this.dialogue = this.add.sprite(0, 288, 'dialogue1d');
+                    this.dialogue.fixedToCamera = true;
+                    this.dialogueFrames = 31;
+                }
+                else {
+                    this.dialogue = this.add.sprite(0, 288, 'dialogue1n');
+                    this.dialogue.fixedToCamera = true;
+                    this.dialogueFrames = 16;
+                }
+                this.pauseAllTimers();
+                this.dialogueState = true;
+                break;
+            case 2:
+                if (dayState === 'day'){
+                    this.dialogue = this.add.sprite(0, 288, 'dialogue2d');
+                    this.dialogue.fixedToCamera = true;
+                    this.dialogueFrames = 10;
+                    this.dialogueState = true;
+                    this.pauseAllTimers();
+                }
+                break;
+            case 3:
+                if (dayState === 'day'){
+                    this.dialogue = this.add.sprite(0, 288, 'dialogue3d');
+                    this.dialogue.fixedToCamera = true;
+                    this.dialogueFrames = 7;
+                    this.dialogueState = true;
+                    this.pauseAllTimers();
+                }
+                break;
+            case 5:
+                if (dayState === 'day'){
+                    this.dialogue = this.add.sprite(0, 288, 'dialogue5d');
+                    this.dialogue.fixedToCamera = true;
+                    this.dialogueFrames = 6;
+                    this.dialogueState = true;
+                    this.pauseAllTimers();
+                }
+                break;
+            case 6:
+                if (dayState === 'day'){
+                    this.dialogue = this.add.sprite(0, 288, 'dialogue6d');
+                    this.dialogue.fixedToCamera = true;
+                    this.dialogueFrames = 6;
+                    this.dialogueState = true;
+                    this.pauseAllTimers();
+                }
+                break;
+            case 7:
+                if (dayState === 'day'){
+                    this.dialogue = this.add.sprite(0, 288, 'dialogue7d');
+                    this.dialogue.fixedToCamera = true;
+                    this.dialogueFrames = 4;
+                    this.dialogueState = true;
+                    this.pauseAllTimers();
+                }
+                break;
+            default:
+                break;
+        }
+    },
+    
+    progressDialogue: function() {
+        if (this.dialogueState){
+            if (this.dialogue.frame < this.dialogueFrames - 1){
+                this.dialogue.frame++;
+            }
+            else{
+                this.dialogue.visible = false;
+                this.dialogueState = false; 
+                this.resumeAllTimers();
+            }
+        }
+    },
     
     initializeTurrets: function() {
         this.turret = this.add.group();
         this.physics.enable(this.turret, Phaser.Physics.PHASER);
         this.turret.enableBody = true;
-        
+        console.log('turrets start: ' + this.game.maxTurret);
         switch(this.game.maxTurrets){
             case 5:
                 canSpawn = false;
@@ -313,9 +409,43 @@ DA5Game.game.prototype = {
     pauseTimers: function() {
         this.timeCycle.pause();
         this.quarterCycle.pause();
-        this.healthDrain.pause();
+        if (this.healthDrain.running)
+            this.healthDrain.pause();
         this.hungerDrain.pause();
         this.thirstDrain.pause();
+    },
+    
+    pauseAllTimers: function() {
+        this.timeCycle.pause();
+        this.quarterCycle.pause();
+        if (this.healthDrain.running)
+            this.healthDrain.pause();
+        this.hungerDrain.pause();
+        this.thirstDrain.pause();
+        if (this.fadeLabelTimer.running){
+            if (this.randomEventLabel !== undefined)
+                this.randomEventLabel.visible = false;
+            if (this.randomEventLabel2 !== undefined){
+                this.plus.visible = false;
+                this.randomEventLabel2.visible = false;
+            }
+            this.fadeLabelTimer.pause();
+        }
+        switch(this.game.maxTurrets){
+            case 5:
+                this.turretFire5.pause();
+            case 4:
+                this.turretFire4.pause();
+            case 3:
+                this.turretFire3.pause();
+            case 2:
+                this.turretFire2.pause();
+            case 1:
+                this.turretFire1.pause();
+                break;
+            default:
+                break;
+        }
     },
     
     resumeTimers: function() {
@@ -324,6 +454,38 @@ DA5Game.game.prototype = {
         this.healthDrain.resume();
         this.hungerDrain.resume();
         this.thirstDrain.resume();
+    },
+    
+    resumeAllTimers: function() {
+        this.timeCycle.resume();
+        this.quarterCycle.resume();
+        if (this.healthDrain.paused)
+            this.healthDrain.resume();
+        this.hungerDrain.resume();
+        this.thirstDrain.resume();
+        if (this.fadeLabelTimer.paused)
+            if (this.randomEventLabel !== undefined)
+                this.randomEventLabel.visible = true;
+            if (this.randomEventLabel2 !== undefined) {
+                this.plus.visible = true;
+                this.randomEventLabel2.visible = true;
+            }
+            this.fadeLabelTimer.resume();
+        switch(this.game.maxTurrets){
+            case 5:
+                this.turretFire5.resume();
+            case 4:
+                this.turretFire4.resume();
+            case 3:
+                this.turretFire3.resume();
+            case 2:
+                this.turretFire2.resume();
+            case 1:
+                this.turretFire1.resume();
+                break;
+            default:
+                break;
+        }
     },
     
     updateInventorySlots: function() {
@@ -502,12 +664,12 @@ DA5Game.game.prototype = {
     movePlayerComponents: function() {
         /* IF STATEMENTS ARE USED HERE TO OPTIMIZE PERFORMANCE BY ONLY MOVING THE COMPONENTS THAT ARE RELEVANT */
         if (this.physics.arcade.overlap(this.game.player, this.river) || this.physics.arcade.overlap(this.game.player, this.lake)) {
-            this.space.x = this.game.player.x - 8;
-            this.space.y = this.game.player.y - 12;
+            this.space.x = this.game.player.x;
+            this.space.y = this.game.player.y - 16;
         }
         if (this.game.hasShield){
-            this.shield.x = this.game.player.x - 8;
-            this.shield.y = this.game.player.y - 8;
+            this.shield.x = this.game.player.x;
+            this.shield.y = this.game.player.y;
         }
         if (this.game.dayState == 'night') {
             this.light1.x = this.game.player.x - 632;
@@ -550,15 +712,14 @@ DA5Game.game.prototype = {
     
     escapeSequence: function() {
         if(this.game.paused) {  // Dialogue State
-            
-            /* TEMPORARY CODE IN CASE OF GAME DIALOGUE OR INSTRUCTIONS */
-            //if (this.game.day === 1 && this.game.dayState === 'day')
-            //    this.menu.kill();
-            /* TEMPORARY CODE IN CASE OF GAME DIALOGUE OR INSTRUCTIONS */
-            
             this.exitMenu.visible = false;
             this.exitGameState = false;
             this.game.paused = false;
+        }
+        else if (this.dialogueState){
+            this.dialogueState = false;
+            this.dialogue.visible = false;
+            this.resumeAllTimers();
         }
         else if (this.slotState){
             this.supplyState = true;
@@ -1049,7 +1210,7 @@ DA5Game.game.prototype = {
     },
     
     toggleCraftMenu: function() {
-        if (this.craftState === false){
+        if (this.craftState === false && !this.dialogueState && !this.game.paused){
             this.craftState = true;
             this.game.interact = true;
             this.craftMenu.frame = 0;
@@ -1129,6 +1290,8 @@ DA5Game.game.prototype = {
         else {
             //Reset Variables
             this.inventoryState = false;
+            this.supplyState = false;
+            this.slotState = false;
             this.game.hasShield = false;
             
             if (this.game.dayState === 'night'){
@@ -1143,7 +1306,7 @@ DA5Game.game.prototype = {
                 this.state.start('worldgen');
             }
             else
-                this.state.start('winState');
+                this.state.start('boss');
         }
     },
     
@@ -1163,7 +1326,8 @@ DA5Game.game.prototype = {
     },
     
     spawnSupplyItem: function() {
-        this.spawnID = this.rnd.integerInRange(1, 11);
+        //this.spawnID = this.rnd.integerInRange(1, 11);
+        this.spawnID = 11;
         this.itemRarity = this.rnd.integerInRange(0, 5);
         switch (this.spawnID){
             // Allows Player to Locate Enemies at Night
@@ -1222,7 +1386,6 @@ DA5Game.game.prototype = {
                 this.game.randomEvent1 = this.rnd.integerInRange(0, 12);
         }
         else {
-             console.log('here 2');
             this.game.randomEvent1 = this.rnd.integerInRange(1, 11);
             this.game.randomEvent2 = this.rnd.integerInRange(1, 11);
             switch(this.game.randomEvent1){
@@ -2696,6 +2859,9 @@ DA5Game.game.prototype = {
         this.threeKey = this.input.keyboard.addKey(Phaser.Keyboard.THREE);
         this.cursors = this.input.keyboard.createCursorKeys();
         
+        this.enterKey = this.input.keyboard.addKey(Phaser.Keyboard.ENTER);
+        this.enterKey.onDown.add(this.progressDialogue, this);
+        
         this.cursors.up.onDown.add(this.fireUp, this);
         this.cursors.down.onDown.add(this.fireDown, this);
         this.cursors.left.onDown.add(this.fireLeft, this);
@@ -2716,12 +2882,18 @@ DA5Game.game.prototype = {
         this.pulse.setAll('outOfBoundsKill', true);
         this.pulse.setAll('checkWorldBounds', true);
         
-        this.game.player = this.add.sprite((2 * this.game.posMult) + 8, (17 * this.game.posMult) + 8, 'player');
+        this.game.player = this.add.sprite((2 * this.game.posMult) + 16, (17 * this.game.posMult) + 16, 'player');
+        this.game.player.anchor.x = 0.5;
+        this.game.player.anchor.y = 0.5;
         this.physics.enable(this.game.player, Phaser.Physics.ARCADE);
         this.game.player.body.collideWorldBounds = true;
         this.shield = this.add.sprite(this.game.player.x - 8, this.game.player.y - 8, 'shield');
+        this.shield.anchor.x = 0.5;
+        this.shield.anchor.y = 0.5;
         this.shield.visible = false;
         this.space = this.add.sprite(this.game.player.x - 8, this.game.player.y - 12, 'space');
+        this.space.anchor.x = 0.5;
+        this.space.anchor.y = 0.5;
         
         this.game.player.animations.add('normal', [0], 0, true);
         this.game.player.animations.add('lakeRecover', [0, 1], 5, true);
@@ -3449,7 +3621,7 @@ DA5Game.game.prototype = {
     },
     
     toggleInventory: function() {
-        if (this.inventoryState === false && !this.game.paused){
+        if (this.inventoryState === false && !this.dialogueState && !this.game.paused){
             this.inventoryState = true;
             this.inventoryIcon.visible = false;
             this.consumablesCanvas.visible = true;

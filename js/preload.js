@@ -19,9 +19,10 @@ DA5Game.preload.prototype = {
         this.load.image('demoscreen', 'assets/img/demo.png');
         this.load.spritesheet('craftMenu', 'assets/img/craftMenu.png', 416, 256);
         this.load.spritesheet('supplyPrompt', 'assets/img/supplyPrompt.png', 416, 256);
+        this.load.image('supplyPromptBoss', 'assets/img/supplyPromptBoss.png');
         this.load.image('slotPrompt', 'assets/img/slotPrompt.png');
         this.load.image('exitMenu', 'assets/img/exitMenu.png');
-        this.load.image('winSplash', 'assets/img/winSplash.png');
+        this.load.image('winSplash', 'assets/img/winState.png');
         /* Menus END */
         
         /* Visual Assets START*/
@@ -59,6 +60,15 @@ DA5Game.preload.prototype = {
         this.load.spritesheet('turret', 'assets/img/turret.png', 24, 24);
         this.load.image('enemypulse', 'assets/img/enemypulse.png');
         
+        //Boss
+        this.load.spritesheet('bossdamaged', 'assets/img/boss/bossdamaged.png', 96, 96);
+        this.load.spritesheet('bossbar', 'assets/img/boss/bossbar.png', 104, 24);
+        this.load.image('boss', 'assets/img/boss/boss.png');
+        this.load.image('bossMissile', 'assets/img/boss/bossMissile.png');
+        this.load.image('bossBasic', 'assets/img/boss/bossPulse.png');
+        this.load.image('bossFlame', 'assets/img/boss/beam.png');
+        
+        
         // Night State assets
         this.load.image('light1', 'assets/img/light1.png');
         this.load.image('light2', 'assets/img/light2.png');
@@ -72,6 +82,18 @@ DA5Game.preload.prototype = {
         this.load.image('day5', 'assets/img/5.png');
         this.load.image('day6', 'assets/img/6.png');
         this.load.image('day7', 'assets/img/7.png');
+        this.load.image('day8', 'assets/img/8.png');
+        
+        // Dialogue
+        this.load.spritesheet('dialogue1d', 'assets/img/dialogue1d.png', 480, 192);
+        this.load.spritesheet('dialogue1n', 'assets/img/dialogue1n.png', 480, 192);
+        this.load.spritesheet('dialogue2d', 'assets/img/dialogue2d.png', 480, 192);
+        this.load.spritesheet('dialogue3d', 'assets/img/dialogue3d.png', 480, 192);
+        this.load.spritesheet('dialogue5d', 'assets/img/dialogue5d.png', 480, 192);
+        this.load.spritesheet('dialogue6d', 'assets/img/dialogue6d.png', 480, 192);
+        this.load.spritesheet('dialogue7d', 'assets/img/dialogue7d.png', 480, 192);
+        this.load.spritesheet('bossdialogue', 'assets/img/bossdialogue.png', 480, 192);
+        this.load.spritesheet('conclusion', 'assets/img/conclusion.png', 480, 192);
         
         //Event Labels
         this.load.image('abundance', 'assets/img/abundance.png');
@@ -106,6 +128,8 @@ DA5Game.preload.prototype = {
         this.load.image('diamondarmor', 'assets/img/diamondarmor.png');
         this.load.image('lamp', 'assets/img/lamp.png');
         this.load.image('irgoggles', 'assets/img/infrared.png');
+        
+        this.load.image('pulsegun', 'assets/img/pulsegun.png');
         
         /* VisualAssets END*/
 	},

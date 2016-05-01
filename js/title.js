@@ -203,80 +203,6 @@ DA5Game.title.prototype = {
         }
     },
     
-    
-    escapeSequence: function() {
-        if(this.game.paused) {  // Dialogue State
-            /* TEMPORARY CODE IN CASE OF GAME DIALOGUE OR INSTRUCTIONS */
-            if (this.game.day === 1 && this.game.dayState === 'day')
-                this.menu.kill();
-            /* TEMPORARY CODE IN CASE OF GAME DIALOGUE OR INSTRUCTIONS */
-            this.exitMenu.visible = false;
-            this.exitGameState = false;
-            this.game.paused = false;
-        }
-        else if (this.slotState){
-            this.supplyState = true;
-            this.supplyPrompt.visible = true;
-            this.slotState = false;
-            this.slotPrompt.visible = false;
-        }
-        else if (this.craftState) {
-            this.craftState = false;
-            this.game.interact = false;
-            this.resourceText.visible = false;
-            this.numLabel.visible = false;
-            this.craftMenu.visible = false;
-        }
-        else {
-            this.exitMenu.visible = true;
-            this.exitGameState = true;
-            this.game.paused = true;
-        }
-    },
-    
-    endDay: function() {
-        if (this.darken.alpha < 1){
-            this.darken.alpha += .05;
-            this.nightTransition = this.time.create(true);
-            this.nightTransition.add(25, this.endDay, this);
-            this.nightTransition.start();
-        }
-        else {
-            //Reset Variables
-            this.inventoryState = false;
-            this.game.hasShield = false;
-            
-            if (this.game.dayState === 'night'){
-                this.game.day++;
-                if (this.game.day >= 3){
-                    this.game.maxTurrets++;
-                }
-            }
-            this.calculateEvent();
-            
-            if (this.game.day <= 7) {
-                this.state.start('worldgen');
-            }
-            else
-                this.state.start('winState');
-        }
-    },
-    
-    quarterDay: function() {
-        if (this.timedial.frame != 4 || this.timedial.frame != 8){
-            this.timedial.frame++;
-            this.quarterCount++;
-            this.quarterCycle = this.time.create(true);
-            this.quarterCycle.add((this.game.dayCycle / 4), this.quarterDay, this);
-            this.quarterCycle.start();
-        }
-        
-        if (this.quarterCount === 2){
-            this.pickUp = true;
-            this.supplyItem.visible = true;
-        }
-    },
-    
     droneMoveCalc: function(subgroup) {
         /* 0 = stop; 1 = up; 2 = down; 3 = left; 4 = right */
         direction = this.rnd.integerInRange(0, 4);
@@ -946,9 +872,6 @@ DA5Game.title.prototype = {
     
     timerInitialization: function() {
         /* LIST OF TIMERS */
-        this.timeCycle = this.time.create(true);
-        this.timeCycle.add(this.game.dayCycle, this.endDay, this);
-        
         // 5 Drone Move Time groups 
         this.dronePatrol1 = this.time.create(true);
         this.dronePatrol1.add(this.game.moveTime1, this.droneMoveCalc, this, 1);
@@ -966,7 +889,6 @@ DA5Game.title.prototype = {
         this.dronePatrol3.start();
         this.dronePatrol4.start();
         this.dronePatrol5.start();
-        this.timeCycle.start();
     },
     
     initializeDrones: function() {

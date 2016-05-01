@@ -25,7 +25,7 @@ DA5Game.worldgen.prototype = {
             this.game.playerHealth = 3;
             this.game.playerHunger = 3;
             this.game.playerThirst = 3;
-            this.game.resourceCount = 500;
+            this.game.resourceCount = 0;
             
             // Player items reset
             this.game.slot1 = 0;
@@ -70,7 +70,7 @@ DA5Game.worldgen.prototype = {
         this.game.losingHealth = false;     // Is the player losing health albeit has no hunger or thirst?
         this.game.interact = false;         // Is the player pressing the interact key?
         this.game.isSlowed = false;         // Is the player on a slowing tile?
-        this.game.dayCycle = 16 * Phaser.Timer.SECOND;      // Time between each cycle
+        this.game.dayCycle = 8 * Phaser.Timer.SECOND;      // Time between each cycle
         this.game.pulseSpeed = 250;
         this.game.stunDuration = 5 * Phaser.Timer.SECOND;
         
@@ -80,14 +80,15 @@ DA5Game.worldgen.prototype = {
         }
         else
             this.game.dayState = 'night';
-        
+        if (!this.game.bossDay)
+            console.log('true');    
         this.setEvent();
         this.spawningArrayInitialization();
 	},
 
 	update: function () {
 	   	this.ready = true;
-        this.state.start('game');
+        this.state.start('boss');
 	},
     
     setEvent: function() {
