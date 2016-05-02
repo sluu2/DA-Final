@@ -17,6 +17,8 @@ DA5Game.startMenu.prototype = {
         
         this.selectKey = this.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
         this.selectKey.onDown.add(this.selectOption, this);
+        this.selectKey2 = this.input.keyboard.addKey(Phaser.Keyboard.ENTER);
+        this.selectKey2.onDown.add(this.selectOption, this);
         this.upKey = this.input.keyboard.addKey(Phaser.Keyboard.W);
         this.downKey = this.input.keyboard.addKey(Phaser.Keyboard.S);
         this.cursors = this.input.keyboard.createCursorKeys();
@@ -30,7 +32,27 @@ DA5Game.startMenu.prototype = {
         this.previousKey.onDown.add(this.previousOption, this);
         
         this.game.playerHealth = 0;
+        this.game.bossState = false;
 	},
+    
+    update: function(){
+        if (this.game.phase1.isPlaying)
+            this.game.phase1.stop();
+        else if (this.game.phase2.isPlaying)
+            this.game.phase2.stop();
+        else if (this.game.bossMusic.isPlaying)
+            this.game.bossMusic.stop();
+        else if (this.game.loseMusic.isPlaying)
+            this.game.loseMusic.stop();
+        else if (this.game.winMusic.isPlaying)
+            this.game.winMusic.stop();
+        
+        if (this.game.menuTheme.volume != 0.1)
+            this.game.menuTheme.volume = 0.1;
+        if (!this.game.menuTheme.isPlaying){
+            this.game.menuTheme.play();
+        }
+    },
     
     menuOptionUp: function() {
         if (this.menuState) {

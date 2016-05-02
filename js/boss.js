@@ -50,6 +50,9 @@ DA5Game.boss.prototype = {
         this.physics.arcade.overlap(this.pulse, this.turret, this.stunTurret, null, this);
         this.physics.arcade.overlap(this.pulse, this.boss, this.damageBoss, null, this);
         
+        this.physics.arcade.collide(this.boss, this.safe);
+        this.physics.arcade.collide(this.boss, this.rock);
+        this.physics.arcade.collide(this.boss, this.boundary);
         this.physics.arcade.overlap(this.boss, this.game.player, this.damagePlayer, null, this);
         this.physics.arcade.overlap(this.bulletArray, this.game.player, this.damagePlayer, null, this);
         this.physics.arcade.overlap(this.bulletArray, this.safe, this.destroyBossProjectile, null, this);
@@ -70,6 +73,20 @@ DA5Game.boss.prototype = {
             this.moveBossComponents();
         }
         this.postLogicCheck();
+        
+        if (this.game.phase1.isPlaying)
+            this.game.phase1.stop();
+        else if (this.game.phase2.isPlaying)
+            this.game.phase2.stop();
+        
+        if (!this.dialogueState) {
+            if (!this.game.bossMusic.isPlaying) {
+                this.game.bossMusic.play();
+                this.game.bossMusic.volume = 0.1;
+            }
+        }
+        else 
+            this.game.bossMusic.stop();
     },
     
     movePlayer: function() {
@@ -96,7 +113,7 @@ DA5Game.boss.prototype = {
     },
     
     GameOver: function() {
-        this.state.start('winState');
+        this.state.start('loseState');
     },
     
     
@@ -161,7 +178,6 @@ DA5Game.boss.prototype = {
         this.bossdamaged.animations.stop();
         this.bossdamaged.frame = 1;
         this.damageImmuneBoss.destroy();
-        //this.game.player.animations.play('normal');      // CHANGE SOON
     },
     
     destroyBossProjectile: function(projectile, object){
@@ -228,12 +244,10 @@ DA5Game.boss.prototype = {
         //this.rand = 4;
         switch (this.rand){
             case 0:
-                console.log('stand');
                 this.BOSSMOVE=false;
                 this.bossAction.add(this.bossActionTime * Phaser.Timer.SECOND, this.bossAi, this);
                 break;
             case 1:
-                console.log('fire');
                 this.BOSSMOVE=true;
                 this.bossAction.add(this.bossActionTime * Phaser.Timer.SECOND, this.bossAi, this);
                 this.projectileFire.add(this.basicRate * Phaser.Timer.SECOND, this.basicAttack, this);
@@ -252,7 +266,6 @@ DA5Game.boss.prototype = {
                 this.projectileFire.start();
                 break;
             case 4:
-                console.log('here');
                 this.BOSSMOVE = false;
                 this.bossAction.add(this.bossActionTime * Phaser.Timer.SECOND, this.bossAi, this);
                 this.projectileFire.add(this.flameRate * Phaser.Timer.SECOND, this.flameAttack, this);
@@ -368,6 +381,8 @@ DA5Game.boss.prototype = {
         this.dialogue = this.add.sprite(0, 288, 'bossdialogue');
         this.dialogue.fixedToCamera = true;
         this.dialogueFrames = 8;
+        this.dialoguePrompt = this.add.text((7 * this.game.posMult) + 24, (12 * this.game.posMult) + 14, 'Press ENTER to continue or ESC to skip', {font: '12px Arial', fill: '#FFF'});
+        this.dialoguePrompt.fixedToCamera = true;
         this.dialogueState = true;
         this.pauseAllTimers();
     },
@@ -378,6 +393,7 @@ DA5Game.boss.prototype = {
         this.dialogue = this.add.sprite(0, 288, 'conclusion');
         this.dialogue.fixedToCamera = true;
         this.dialogueFrames = 7;
+        this.dialoguePrompt.visible = true;
         this.dialogueState = true;
         this.endGame = true;
     },
@@ -390,12 +406,13 @@ DA5Game.boss.prototype = {
             else {
                 if (!this.endGame) {
                     this.dialogue.visible = false;
+                    this.dialoguePrompt.visible = false;
                     this.dialogueState = false;
                     this.darken.visible = false;
                     this.resumeAllTimers();
                 }
                 else
-                    this.GameOver();
+                    this.state.start('winState');
             }
         }
     },
@@ -783,10 +800,16 @@ DA5Game.boss.prototype = {
             this.game.paused = false;
         }
         else if (this.dialogueState){
-            this.dialogueState = false;
-            this.dialogue.visible = false;
-            this.darken.visible = false;
-            this.resumeAllTimers();
+            if (this.endGame) {
+                this.state.start('winState');
+            }
+            else {
+                this.dialogueState = false;
+                this.dialogue.visible = false;
+                this.dialoguePrompt.visible = false;
+                this.darken.visible = false;
+                this.resumeAllTimers();
+            }
         }
         else if (this.craftState) {
             this.craftState = false;
@@ -1444,7 +1467,6 @@ DA5Game.boss.prototype = {
     
     /* ---------------------- INITIALIZATION FUNCTIONS BEGIN AT THIS POINT ONWARD ---------------------- */
     playerInitialization: function() {
-        this.game.resourceCount = 500;
         this.upKey = this.input.keyboard.addKey(Phaser.Keyboard.W);
         this.leftKey = this.input.keyboard.addKey(Phaser.Keyboard.A);
         this.downKey = this.input.keyboard.addKey(Phaser.Keyboard.S);
@@ -1510,8 +1532,7 @@ DA5Game.boss.prototype = {
     
     initializeFood: function() {
         /* FOOD CREATION */
-        this.game.maxFood = 10;
-        this.game.numFood = this.maxFood;
+        this.game.numFood = this.game.maxFood;
         this.food = this.add.group();
         this.food.enableBody = true;
         

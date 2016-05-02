@@ -70,7 +70,7 @@ DA5Game.worldgen.prototype = {
         this.game.losingHealth = false;     // Is the player losing health albeit has no hunger or thirst?
         this.game.interact = false;         // Is the player pressing the interact key?
         this.game.isSlowed = false;         // Is the player on a slowing tile?
-        this.game.dayCycle = 8 * Phaser.Timer.SECOND;      // Time between each cycle
+        this.game.dayCycle = 60 * Phaser.Timer.SECOND;      // Time between each cycle
         this.game.pulseSpeed = 250;
         this.game.stunDuration = 5 * Phaser.Timer.SECOND;
         
@@ -80,40 +80,45 @@ DA5Game.worldgen.prototype = {
         }
         else
             this.game.dayState = 'night';
-        if (!this.game.bossDay)
-            console.log('true');    
-        this.setEvent();
+        
+        if (!this.game.bossState){
+            this.setEvent();
+        }
+        else {
+            this.setBossVariables();
+        }
         this.spawningArrayInitialization();
 	},
 
 	update: function () {
+        if (this.game.menuTheme.isPlaying)
+            this.game.menuTheme.stop();
 	   	this.ready = true;
-        this.state.start('boss');
+        
+        if (!this.game.bossState)
+            this.state.start('game');
+        else
+            this.state.start('boss');
 	},
     
     setEvent: function() {
-        console.log('Game Day: ' + this.game.day);
-        
         if (this.game.randomEvent1 === 1 || this.game.randomEvent2 === 1) {         // ABUNDANCE
-            this.game.maxFood = 10;
-            this.game.numFood = 10;
+            this.game.maxFood = 12;
         }
         else  if (this.game.randomEvent1 === 2 || this.game.randomEvent2 === 2) {   // FAMINE
-            this.game.maxFood = 3;
-            this.game.numFood = 3;
+            this.game.maxFood = 5;
         }
         else {
-            this.game.maxFood = 5;
-            this.game.numFood = 5;
+            this.game.maxFood = 8;
         }
         
         
         if (this.game.randomEvent1 === 3 || this.game.randomEvent2 === 3)           // SURPLUS
-            this.game.maxResource = 10;
+            this.game.maxResource = 12;
         else if (this.game.randomEvent1 === 4 || this.game.randomEvent2 === 4)      // SCARCITY
-            this.game.maxResource = 3;
-        else 
             this.game.maxResource = 5;
+        else 
+            this.game.maxResource = 8;
         
         
         if (this.game.randomEvent1 === 5 || this.game.randomEvent2 === 5)                       // QUENCH
@@ -144,6 +149,13 @@ DA5Game.worldgen.prototype = {
             this.game.droneSpeed = 75;
         else
             this.game.droneSpeed = 50;
+    },
+    
+    setBossVariables: function() {
+        this.game.maxFood = 10;
+        this.game.maxResource = 10;
+        this.game.hungerDecay = 10 * Phaser.Timer.SECOND;
+        this.game.thirstDecay = 10 * Phaser.Timer.SECOND;
     },
     
     worldSeedCreate: function() {

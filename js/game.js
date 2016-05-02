@@ -25,8 +25,8 @@ DA5Game.game.prototype = {
         this.playerInitialization();
         
         // TEST RESET
-        this.win = this.add.sprite((1 * this.game.posMult) + 8, (18 * this.game.posMult) + 8, 'win');
-        this.physics.enable(this.win, Phaser.Physics.ARCADE);
+        //this.win = this.add.sprite((1 * this.game.posMult) + 8, (18 * this.game.posMult) + 8, 'win');
+        //this.physics.enable(this.win, Phaser.Physics.ARCADE);
         
         this.initializeHUD();
         this.dialogueState = false;
@@ -52,7 +52,6 @@ DA5Game.game.prototype = {
         this.physics.arcade.overlap(this.game.player, this.food, this.collectFood, null, this);
         this.physics.arcade.overlap(this.game.player, this.resource, this.collectResource, null, this);
         this.physics.arcade.overlap(this.game.player, this.supplyItem, this.collectSupplyItem, null, this);
-        
         
         if (this.game.day >= 2) {
             this.physics.arcade.collide(this.drone, this.drone);
@@ -82,13 +81,44 @@ DA5Game.game.prototype = {
             this.dronePatrol();
         }
         this.postLogicCheck();
+        
+        // MUSIC
+        if (this.game.menuTheme.isPlaying)
+            this.game.menuTheme.stop();
+        
+        switch(this.game.day){
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+                if (this.game.day == 1 && this.game.dayState == 'day' && !this.dialogueState){
+                    if (!this.game.phase1.isPlaying) {
+                        this.game.phase1.play();
+                        this.game.phase1.volume = 0.1;
+                    }
+                }
+                break;
+            case 5:
+            case 6:
+            case 7:
+                if (this.game.phase1.isPlaying)
+                    this.game.phase1.stop();
+                if (!this.game.phase2.isPlaying) {
+                    this.game.phase2.play();
+                    this.game.phase2.volume = 0.1;
+                }
+                break;
+            default:
+                break;
+        }
     },
     
     movePlayer: function() {
         if (this.game.interact || this.supplyState || this.slotState)
             this.game.speed = this.game.stop;
-        else if (this.game.isSlowed)
+        else if (this.game.isSlowed){
             this.game.speed = this.game.slow;
+        }
         else
             this.game.speed = this.game.normal;
         /* CONTROLS */
@@ -108,7 +138,9 @@ DA5Game.game.prototype = {
     },
     
     GameOver: function() {
-        this.state.start('winState');
+        this.endDay();
+        
+        //this.state.start('loseState');
     },
     
     /* ---------------------- EXTERNAL HELPER FUNCTIONS BEGIN HERE AND ONWARDS ---------------------- */
@@ -130,11 +162,16 @@ DA5Game.game.prototype = {
                     this.dialogue = this.add.sprite(0, 288, 'dialogue1d');
                     this.dialogue.fixedToCamera = true;
                     this.dialogueFrames = 31;
+                    this.dialoguePrompt = this.add.text((7 * this.game.posMult) + 24, (12 * this.game.posMult) + 14, 'Press ENTER to continue or ESC to skip', {font: '12px Arial', fill: '#FFF'});
+                    this.dialoguePrompt.fixedToCamera = true;
+                    
                 }
                 else {
                     this.dialogue = this.add.sprite(0, 288, 'dialogue1n');
                     this.dialogue.fixedToCamera = true;
                     this.dialogueFrames = 16;
+                    this.dialoguePrompt = this.add.text((7 * this.game.posMult) + 24, (12 * this.game.posMult) + 14, 'Press ENTER to continue or ESC to skip', {font: '12px Arial', fill: '#FFF'});
+                    this.dialoguePrompt.fixedToCamera = true;
                 }
                 this.pauseAllTimers();
                 this.dialogueState = true;
@@ -144,6 +181,8 @@ DA5Game.game.prototype = {
                     this.dialogue = this.add.sprite(0, 288, 'dialogue2d');
                     this.dialogue.fixedToCamera = true;
                     this.dialogueFrames = 10;
+                    this.dialoguePrompt = this.add.text((7 * this.game.posMult) + 24, (12 * this.game.posMult) + 14, 'Press ENTER to continue or ESC to skip', {font: '12px Arial', fill: '#FFF'});
+                    this.dialoguePrompt.fixedToCamera = true;
                     this.dialogueState = true;
                     this.pauseAllTimers();
                 }
@@ -153,6 +192,8 @@ DA5Game.game.prototype = {
                     this.dialogue = this.add.sprite(0, 288, 'dialogue3d');
                     this.dialogue.fixedToCamera = true;
                     this.dialogueFrames = 7;
+                    this.dialoguePrompt = this.add.text((7 * this.game.posMult) + 24, (12 * this.game.posMult) + 14, 'Press ENTER to continue or ESC to skip', {font: '12px Arial', fill: '#FFF'});
+                    this.dialoguePrompt.fixedToCamera = true;
                     this.dialogueState = true;
                     this.pauseAllTimers();
                 }
@@ -162,6 +203,8 @@ DA5Game.game.prototype = {
                     this.dialogue = this.add.sprite(0, 288, 'dialogue5d');
                     this.dialogue.fixedToCamera = true;
                     this.dialogueFrames = 6;
+                    this.dialoguePrompt = this.add.text((7 * this.game.posMult) + 24, (12 * this.game.posMult) + 14, 'Press ENTER to continue or ESC to skip', {font: '12px Arial', fill: '#FFF'});
+                    this.dialoguePrompt.fixedToCamera = true;
                     this.dialogueState = true;
                     this.pauseAllTimers();
                 }
@@ -171,6 +214,8 @@ DA5Game.game.prototype = {
                     this.dialogue = this.add.sprite(0, 288, 'dialogue6d');
                     this.dialogue.fixedToCamera = true;
                     this.dialogueFrames = 6;
+                    this.dialoguePrompt = this.add.text((7 * this.game.posMult) + 24, (12 * this.game.posMult) + 14, 'Press ENTER to continue or ESC to skip', {font: '12px Arial', fill: '#FFF'});
+                    this.dialoguePrompt.fixedToCamera = true;
                     this.dialogueState = true;
                     this.pauseAllTimers();
                 }
@@ -180,6 +225,8 @@ DA5Game.game.prototype = {
                     this.dialogue = this.add.sprite(0, 288, 'dialogue7d');
                     this.dialogue.fixedToCamera = true;
                     this.dialogueFrames = 4;
+                    this.dialoguePrompt = this.add.text((7 * this.game.posMult) + 24, (12 * this.game.posMult) + 14, 'Press ENTER to continue or ESC to skip', {font: '12px Arial', fill: '#FFF'});
+                    this.dialoguePrompt.fixedToCamera = true;
                     this.dialogueState = true;
                     this.pauseAllTimers();
                 }
@@ -196,6 +243,7 @@ DA5Game.game.prototype = {
             }
             else{
                 this.dialogue.visible = false;
+                this.dialoguePrompt.visible = false;
                 this.dialogueState = false; 
                 this.resumeAllTimers();
             }
@@ -206,7 +254,6 @@ DA5Game.game.prototype = {
         this.turret = this.add.group();
         this.physics.enable(this.turret, Phaser.Physics.PHASER);
         this.turret.enableBody = true;
-        console.log('turrets start: ' + this.game.maxTurret);
         switch(this.game.maxTurrets){
             case 5:
                 canSpawn = false;
@@ -672,14 +719,14 @@ DA5Game.game.prototype = {
             this.shield.y = this.game.player.y;
         }
         if (this.game.dayState == 'night') {
-            this.light1.x = this.game.player.x - 632;
-            this.light1.y = this.game.player.y - 632;
-            this.light2.x = this.game.player.x - 632;
-            this.light2.y = this.game.player.y - 632;
-            this.ir1.x = this.game.player.x - 632;
-            this.ir1.y = this.game.player.y - 632;
-            this.ir2.x = this.game.player.x - 632;
-            this.ir2.y = this.game.player.y - 632;
+            this.light1.x = this.game.player.x;
+            this.light1.y = this.game.player.y;
+            this.light2.x = this.game.player.x;
+            this.light2.y = this.game.player.y;
+            this.ir1.x = this.game.player.x;
+            this.ir1.y = this.game.player.y;
+            this.ir2.x = this.game.player.x;
+            this.ir2.y = this.game.player.y;
         }
     },
     
@@ -718,6 +765,7 @@ DA5Game.game.prototype = {
         }
         else if (this.dialogueState){
             this.dialogueState = false;
+            this.dialoguePrompt.visible = false;
             this.dialogue.visible = false;
             this.resumeAllTimers();
         }
@@ -1250,7 +1298,7 @@ DA5Game.game.prototype = {
         
         // Hides spacebar when player is not touching a water block
         if (!this.physics.arcade.overlap(this.game.player, this.lake) && !this.physics.arcade.overlap(this.game.player, this.river))
-                this.space.visible = false;
+            this.space.visible = false;
         
         // health drain occurs when either the player's thirst or hunger is at 0
         if (this.game.playerThirst === 0 || this.game.playerHunger === 0){
@@ -1302,11 +1350,16 @@ DA5Game.game.prototype = {
             }
             this.calculateEvent();
             
+            if (this.game.day > 7)
+                this.game.bossState = true;
+            this.state.start('worldgen');
+            /*
             if (this.game.day <= 7) {
                 this.state.start('worldgen');
             }
             else
                 this.state.start('boss');
+            */
         }
     },
     
@@ -1508,11 +1561,15 @@ DA5Game.game.prototype = {
     },
     
     initializeLight: function() {
-        this.light1 = this.add.sprite((-17 * this.game.posMult) - 16, (-3 * this.game.posMult) + 16, 'light1');
+        this.light1 = this.add.sprite((2 * this.game.posMult) + 16, (17 * this.game.posMult) + 16, 'light1');
+        this.light1.anchor.x = 0.5;
+        this.light1.anchor.y = 0.5;
         this.physics.enable(this.light1, Phaser.Physics.PHASER);
         this.light1.alpha = .95;
         
-        this.light2 = this.add.sprite((-17 * this.game.posMult) - 16, (-3 * this.game.posMult) + 16, 'light2');
+        this.light2 = this.add.sprite((2 * this.game.posMult) + 16, (17 * this.game.posMult) + 16, 'light2');
+        this.light2.anchor.x = 0.5;
+        this.light2.anchor.y = 0.5;
         this.physics.enable(this.light2, Phaser.Physics.PHASER);
         this.light2.alpha = .95;
         if (this.game.dayState === 'night' && !this.game.infrared) {
@@ -2909,7 +2966,6 @@ DA5Game.game.prototype = {
         /* FOOD CREATION */
         this.food = this.add.group();
         this.food.enableBody = true;
-        
         count = this.game.maxFood;
         while (count > 0){
             canSpawn = true;
@@ -2926,6 +2982,7 @@ DA5Game.game.prototype = {
                 count--;   
             }
         }
+        this.game.numFood = this.game.maxFood;
     },
     
     initializeResources: function() {

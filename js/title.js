@@ -57,6 +57,12 @@ DA5Game.title.prototype = {
         
         /* AI */
         this.dronePatrol();
+        
+        if (this.game.menuTheme.volume != 0.2)
+            this.game.menuTheme.volume = 0.2;
+        if (!this.game.menuTheme.isPlaying){
+            this.game.menuTheme.play();
+        }
     },
     
     playerInitialization: function() {

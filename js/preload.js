@@ -23,6 +23,7 @@ DA5Game.preload.prototype = {
         this.load.image('slotPrompt', 'assets/img/slotPrompt.png');
         this.load.image('exitMenu', 'assets/img/exitMenu.png');
         this.load.image('winSplash', 'assets/img/winState.png');
+        this.load.image('loseSplash', 'assets/img/loseState.png');
         /* Menus END */
         
         /* Visual Assets START*/
@@ -67,7 +68,6 @@ DA5Game.preload.prototype = {
         this.load.image('bossMissile', 'assets/img/boss/bossMissile.png');
         this.load.image('bossBasic', 'assets/img/boss/bossPulse.png');
         this.load.image('bossFlame', 'assets/img/boss/beam.png');
-        
         
         // Night State assets
         this.load.image('light1', 'assets/img/light1.png');
@@ -128,13 +128,28 @@ DA5Game.preload.prototype = {
         this.load.image('diamondarmor', 'assets/img/diamondarmor.png');
         this.load.image('lamp', 'assets/img/lamp.png');
         this.load.image('irgoggles', 'assets/img/infrared.png');
-        
         this.load.image('pulsegun', 'assets/img/pulsegun.png');
-        
         /* VisualAssets END*/
+        
+        /* AUDIO ASSETS START */
+        this.load.audio('kittyrock', 'assets/audio/Aqua Kitty OST - Kitty Rock.ogg');
+        this.load.audio('photosynthesis', 'assets/audio/Fittest - Photosynthesis.ogg');
+        this.load.audio('cobalt', 'assets/audio/Fittest - Dreams of Cobalt.ogg');
+        this.load.audio('heavyindustry', 'assets/audio/Fittest - Heavy Industry.mp3');
+        this.load.audio('aroundtheworld', 'assets/audio/Castle Crashers - Race Around the World.ogg');
+        this.load.audio('glacial', 'assets/audio/Fittest - Glacial Reflection.ogg');
+        
+        /* AUDIO ASSETS END */
 	},
 
 	create: function () {
+        /* SET ALL MUSIC HERE */
+        this.game.menuTheme = this.add.audio('kittyrock');
+        this.game.phase1 = this.add.audio('photosynthesis');
+        this.game.phase2 = this.add.audio('cobalt');
+        this.game.bossMusic = this.add.audio('heavyindustry');
+        this.game.loseMusic = this.add.audio('glacial');
+        this.game.winMusic = this.add.audio('aroundtheworld');
 		this.preloadBar.cropEnabled = false;
 	},
 
