@@ -12,6 +12,7 @@ DA5Game.preload.prototype = {
         
         /* MENUS START*/
         this.load.image('title', 'assets/img/title.png');
+        this.load.image('showcase', 'assets/img/showcase.png');
         this.load.spritesheet('pressstart', 'assets/img/start.png', 228, 23);
         this.load.image('blank', 'assets/img/blank.png');
         this.load.spritesheet('startMenu', 'assets/img/startMenu.png', 480, 480);
@@ -70,8 +71,8 @@ DA5Game.preload.prototype = {
         this.load.image('bossFlame', 'assets/img/boss/beam.png');
         
         // Night State assets
-        this.load.image('light1', 'assets/img/light1.png');
-        this.load.image('light2', 'assets/img/light2.png');
+        this.load.image('light1', 'assets/img/light2.png');
+        this.load.image('light2', 'assets/img/light3.png');
         this.load.image('darken', 'assets/img/darken.png');
         
         //Day Labels

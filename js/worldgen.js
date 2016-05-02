@@ -81,12 +81,10 @@ DA5Game.worldgen.prototype = {
         else
             this.game.dayState = 'night';
         
-        if (!this.game.bossState){
+        if (!this.game.bossState)
             this.setEvent();
-        }
-        else {
+        else
             this.setBossVariables();
-        }
         this.spawningArrayInitialization();
 	},
 
@@ -102,15 +100,12 @@ DA5Game.worldgen.prototype = {
 	},
     
     setEvent: function() {
-        if (this.game.randomEvent1 === 1 || this.game.randomEvent2 === 1) {         // ABUNDANCE
+        if (this.game.randomEvent1 === 1 || this.game.randomEvent2 === 1)         // ABUNDANCE
             this.game.maxFood = 12;
-        }
-        else  if (this.game.randomEvent1 === 2 || this.game.randomEvent2 === 2) {   // FAMINE
+        else  if (this.game.randomEvent1 === 2 || this.game.randomEvent2 === 2)   // FAMINE
             this.game.maxFood = 5;
-        }
-        else {
+        else
             this.game.maxFood = 8;
-        }
         
         
         if (this.game.randomEvent1 === 3 || this.game.randomEvent2 === 3)           // SURPLUS
@@ -146,9 +141,9 @@ DA5Game.worldgen.prototype = {
         
         
         if (this.game.randomEvent1 === 11 || this.game.randomEvent2 === 11)             // AGILITY
-            this.game.droneSpeed = 75;
+            this.game.droneSpeed = 60;
         else
-            this.game.droneSpeed = 50;
+            this.game.droneSpeed = 40;
     },
     
     setBossVariables: function() {

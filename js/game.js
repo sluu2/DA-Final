@@ -97,6 +97,18 @@ DA5Game.game.prototype = {
                         this.game.phase1.volume = 0.1;
                     }
                 }
+                else if (this.game.day == 1 && this.game.dayState == 'night'){
+                    if (!this.game.phase1.isPlaying) {
+                        this.game.phase1.play();
+                        this.game.phase1.volume = 0.1;
+                    }
+                }
+                else if (this.game.day > 1) {
+                    if (!this.game.phase1.isPlaying) {
+                        this.game.phase1.play();
+                        this.game.phase1.volume = 0.1;
+                    }
+                }
                 break;
             case 5:
             case 6:
@@ -138,9 +150,7 @@ DA5Game.game.prototype = {
     },
     
     GameOver: function() {
-        this.endDay();
-        
-        //this.state.start('loseState');
+        this.state.start('loseState');
     },
     
     /* ---------------------- EXTERNAL HELPER FUNCTIONS BEGIN HERE AND ONWARDS ---------------------- */
@@ -640,6 +650,11 @@ DA5Game.game.prototype = {
                 this.game.playerMaxHealth = 5;
             while (this.game.playerHealth > this.game.playerMaxHealth)
                 this.healthDecay(true);
+            this.health1.kill();
+            this.health2.kill();
+            this.health3.kill();
+            this.health4.kill();
+            this.health5.kill();
             this.setHealth();
         }
         if (this.game.slot1 === 6 || this.game.slot1 === 7 || this.game.slot2 === 6 || this.game.slot2 === 7) {
@@ -647,6 +662,11 @@ DA5Game.game.prototype = {
                 this.game.playerMaxHunger = 5;
             while (this.game.playerHunger > this.playerMaxHunger)
                 this.hungerDecay(true);
+            this.hunger1.kill();
+            this.hunger2.kill();
+            this.hunger3.kill();
+            this.hunger4.kill();
+            this.hunger5.kill();
             this.setHunger();
         }
         if (this.game.slot1 === 8 || this.game.slot1 === 9 || this.game.slot2 === 8 || this.game.slot2 === 9) {
@@ -654,6 +674,11 @@ DA5Game.game.prototype = {
                 this.game.playerMaxThirst = 5;
             while (this.game.playerThirst > this.game.playerMaxThirst)
                 this.thirstDrain(true);
+            this.thirst1.kill();
+            this.thirst2.kill();
+            this.thirst3.kill();
+            this.thirst4.kill();
+            this.thirst5.kill();
             this.setThirst();
         }
         
@@ -1379,9 +1404,7 @@ DA5Game.game.prototype = {
     },
     
     spawnSupplyItem: function() {
-        //this.spawnID = this.rnd.integerInRange(1, 11);
-        this.spawnID = 11;
-        this.itemRarity = this.rnd.integerInRange(0, 5);
+        this.spawnID = this.rnd.integerInRange(1, 11);
         switch (this.spawnID){
             // Allows Player to Locate Enemies at Night
             // +1 Medkit Consumable

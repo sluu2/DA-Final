@@ -18,8 +18,8 @@ DA5Game.boss.prototype = {
         this.initializeBoss();
         
         // TEST RESET
-        this.win = this.add.sprite((1 * this.game.posMult) + 8, (18 * this.game.posMult) + 8, 'win');
-        this.physics.enable(this.win, Phaser.Physics.ARCADE);
+        //this.win = this.add.sprite((1 * this.game.posMult) + 8, (18 * this.game.posMult) + 8, 'win');
+        //this.physics.enable(this.win, Phaser.Physics.ARCADE);
         
         this.initializeHUD();
         this.dialogueState = false;

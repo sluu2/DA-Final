@@ -20,6 +20,8 @@ DA5Game.title.prototype = {
         this.timerInitialization();
         this.playerInitialization();
         this.camera.follow(this.player);
+        this.showcase = this.add.sprite(0, 0, 'showcase');
+        this.showcase.fixedToCamera = true;
         this.title = this.add.sprite(240, 160, 'title');
         this.title.anchor.x = 0.5;
         this.title.anchor.y = 0.5;
