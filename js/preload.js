@@ -2,13 +2,34 @@ DA5Game.preload = function(game) {
     this.preloadBar = null;
     this.titleText = null;
     this.ready = false;
+    
 };
 
 DA5Game.preload.prototype = {
 	preload: function () {
-		this.preloadBar = this.add.sprite(this.world.centerX, this.world.centerY + 64, 'preloaderBar');
+		this.preloadBar = this.add.sprite(this.world.centerX, this.world.centerY, 'preloaderBar');
 		this.preloadBar.anchor.setTo(0.5, 0.5);
 		this.load.setPreloadSprite(this.preloadBar);
+        this.loadingImg = this.add.sprite(this.world.centerX, this.world.centerY + 96, 'loading');
+        this.loadingImg.anchor.x = 0.5;
+        this.loadingImg.anchor.y = 0.5;
+        this.launchingImg = this.add.sprite(this.world.centerX, this.world.centerY + 96, 'launching');
+        this.launchingImg.anchor.x = 0.5;
+        this.launchingImg.anchor.y = 0.5;
+        this.launchingImg.visible = false;
+        
+        /* AUDIO ASSETS START */
+        this.load.audio('kittyrock', 'assets/audio/Aqua Kitty OST - Kitty Rock.ogg');
+        this.load.audio('photosynthesis', 'assets/audio/Fittest - Photosynthesis.ogg');
+        this.load.audio('cobalt', 'assets/audio/Fittest - Dreams of Cobalt.ogg');
+        this.load.audio('heavyindustry', 'assets/audio/Fittest - Heavy Industry.mp3');
+        this.load.audio('aroundtheworld', 'assets/audio/Castle Crashers - Race Around the World.ogg');
+        this.load.audio('glacial', 'assets/audio/Fittest - Glacial Reflection.ogg');
+        
+        this.load.audio('ring', 'assets/audio/ring.ogg');
+        this.load.audio('hurt', 'assets/audio/hurt.ogg');
+        this.load.audio('jab', 'assets/audio/jab.mp3');
+        /* AUDIO ASSETS END */
         
         /* MENUS START*/
         this.load.image('title', 'assets/img/title.png');
@@ -131,16 +152,6 @@ DA5Game.preload.prototype = {
         this.load.image('irgoggles', 'assets/img/infrared.png');
         this.load.image('pulsegun', 'assets/img/pulsegun.png');
         /* VisualAssets END*/
-        
-        /* AUDIO ASSETS START */
-        this.load.audio('kittyrock', 'assets/audio/Aqua Kitty OST - Kitty Rock.ogg');
-        this.load.audio('photosynthesis', 'assets/audio/Fittest - Photosynthesis.ogg');
-        this.load.audio('cobalt', 'assets/audio/Fittest - Dreams of Cobalt.ogg');
-        this.load.audio('heavyindustry', 'assets/audio/Fittest - Heavy Industry.mp3');
-        this.load.audio('aroundtheworld', 'assets/audio/Castle Crashers - Race Around the World.ogg');
-        this.load.audio('glacial', 'assets/audio/Fittest - Glacial Reflection.ogg');
-        
-        /* AUDIO ASSETS END */
 	},
 
 	create: function () {
@@ -151,11 +162,25 @@ DA5Game.preload.prototype = {
         this.game.bossMusic = this.add.audio('heavyindustry');
         this.game.loseMusic = this.add.audio('glacial');
         this.game.winMusic = this.add.audio('aroundtheworld');
+        this.game.ring = this.add.audio('ring');
+        this.game.hurt = this.add.audio('hurt');
+        this.game.jab = this.add.audio('jab');
 		this.preloadBar.cropEnabled = false;
+        
+        this.delayLaunch = this.time.create(true);
+        this.delayLaunch.add(5 * Phaser.Timer.SECOND, this.startGame, this);
+        this.delayLaunch.start();
 	},
 
 	update: function () {
 	   	this.ready = true;
+        if (this.delayLaunch.running){
+            this.loadingImg.visible = false;
+            this.launchingImg.visible = true;
+        }
+	},
+    
+    startGame: function() {
         this.state.start('titlegen');
-	}
+    },
 };

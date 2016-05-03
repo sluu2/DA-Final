@@ -61,16 +61,19 @@ DA5Game.worldgen.prototype = {
         /* STANDARD TIMERS */
         this.game.damageImmuneTime = 2 * Phaser.Timer.SECOND;       // Immunity duration before being able to be damaged by enemy
         this.game.healthDecay = 5 * Phaser.Timer.SECOND;            // Health Decay Rate if Hunger and/or Thirst is 0
-        this.game.thirstRestoreL = 1 * Phaser.Timer.SECOND;         // Thirst Restore Rate (Lake)
-        this.game.thirstRestoreR = 1.5 * Phaser.Timer.SECOND;       // Thirst Restore Rate (River)
-        this.game.foodRespawn = 5 * Phaser.Timer.SECOND;            // Time before food respawns after inactivity
-        this.game.eventLabelTimer = 1 * Phaser.Timer.SECOND;
+        this.game.thirstRestoreL = .5 * Phaser.Timer.SECOND;         // Thirst Restore Rate (Lake)
+        this.game.thirstRestoreR = .75 * Phaser.Timer.SECOND;       // Thirst Restore Rate (River)
+        this.game.objectRespawn = 4 * Phaser.Timer.SECOND;            // Time before food respawns after inactivity
+        this.game.eventLabelTimer = 1.5 * Phaser.Timer.SECOND;
         
         /* NON TUNABLE VARIABLES */
         this.game.losingHealth = false;     // Is the player losing health albeit has no hunger or thirst?
         this.game.interact = false;         // Is the player pressing the interact key?
         this.game.isSlowed = false;         // Is the player on a slowing tile?
-        this.game.dayCycle = 30 * Phaser.Timer.SECOND;      // Time between each cycle
+        if (this.game.day == 1)
+            this.game.dayCycle = 30 * Phaser.Timer.SECOND;      // Time between each cycle
+        else
+            this.game.dayCycle = 45 * Phaser.Timer.SECOND;
         this.game.pulseSpeed = 250;
         this.game.stunDuration = 5 * Phaser.Timer.SECOND;
         
@@ -119,17 +122,17 @@ DA5Game.worldgen.prototype = {
         if (this.game.randomEvent1 === 5 || this.game.randomEvent2 === 5)                       // QUENCH
             this.game.thirstDecay = 15 * Phaser.Timer.SECOND;
         else if (this.game.randomEvent1 === 6 || this.game.randomEvent2 === 6)                  // DEHYDRATION
-            this.game.thirstDecay = 8 * Phaser.Timer.SECOND;
-        else
             this.game.thirstDecay = 10 * Phaser.Timer.SECOND;
+        else
+            this.game.thirstDecay = 12 * Phaser.Timer.SECOND;
         
         
         if (this.game.randomEvent1 === 7 || this.game.randomEvent2 === 7)                           // SATIATION
             this.game.hungerDecay = 15 * Phaser.Timer.SECOND;
         else if (this.game.randomEvent1 === 8 || this.game.randomEvent2 === 8)                      // STARVATION
-            this.game.hungerDecay = 8 * Phaser.Timer.SECOND;
-        else
             this.game.hungerDecay = 10 * Phaser.Timer.SECOND;
+        else
+            this.game.hungerDecay = 12 * Phaser.Timer.SECOND;
         
         
         if (this.game.randomEvent1 === 9 || this.game.randomEvent2 === 9)               // LOW ALERT

@@ -824,6 +824,8 @@ DA5Game.game.prototype = {
     },
     
     stunDrone: function(pulse, drone){
+        if (!this.game.hurt.isPlaying)
+            this.game.hurt.play('', 0, 0.1, false);
         if (drone === this.drone1) {
             this.dronestunned1 = true;
             this.drone1.body.velocity.x = 0;
@@ -962,6 +964,8 @@ DA5Game.game.prototype = {
     },
     
     stunTurret: function(pulse, turret){
+        if (!this.game.hurt.isPlaying)
+            this.game.hurt.play('', 0, 0.1, false);
         if (turret == this.turret1){
             this.turretstunned1 = true;
             this.turret1.animations.play('stunned');
@@ -1125,6 +1129,7 @@ DA5Game.game.prototype = {
             this.game.shieldCount -= 1;
             this.updateConsumables();
             this.game.hasShield = true;
+            this.shield.frame = 0;
             this.shield.visible = true;
         }
     },
@@ -1341,16 +1346,18 @@ DA5Game.game.prototype = {
         
         // respawns more food when the food is collected after a certain amount of time
         if (this.game.numFood < this.game.maxFood){
-            if (!this.foodRespawnTimer.running){
-                this.foodRespawnTimer = this.time.create(true);
-                this.foodRespawnTimer.add(this.game.foodRespawn, this.updateFood, this);
-                this.foodRespawnTimer.start();
+            if (!this.objectRespawnTimer.running){
+                this.objectRespawnTimer = this.time.create(true);
+                this.objectRespawnTimer.add(this.game.objectRespawn, this.updateFood, this);
+                this.objectRespawnTimer.start();
             }
         }
         
         // end condition
-        if (this.game.playerHealth === 0)
+        if (this.game.playerHealth === 0) {
+            this.game.hurt.play('', 0, 0.1, false);
             this.GameOver();
+        }
     },
     
     endDay: function() {
@@ -1378,13 +1385,6 @@ DA5Game.game.prototype = {
             if (this.game.day > 7)
                 this.game.bossState = true;
             this.state.start('worldgen');
-            /*
-            if (this.game.day <= 7) {
-                this.state.start('worldgen');
-            }
-            else
-                this.state.start('boss');
-            */
         }
     },
     
@@ -1615,11 +1615,15 @@ DA5Game.game.prototype = {
     
     /* This method is the same as initializeLight, except that it will help control getting infrared goggles at night*/
     initializeInfrared: function() {
-        this.ir1 = this.add.sprite((-17 * this.game.posMult) - 16, (-3 * this.game.posMult) + 16, 'light1');
+        this.ir1 = this.add.sprite((2 * this.game.posMult) + 16, (17 * this.game.posMult) + 16, 'light1');
+        this.ir1.anchor.x = 0.5;
+        this.ir1.anchor.y = 0.5;
         this.physics.enable(this.ir1, Phaser.Physics.PHASER);
         this.ir1.alpha = .95;
         
-        this.ir2 = this.add.sprite((-17 * this.game.posMult) - 16, (-3 * this.game.posMult) + 16, 'light2');
+        this.ir2 = this.add.sprite((2 * this.game.posMult) + 16, (17 * this.game.posMult) + 16, 'light2');
+        this.ir2.anchor.x = 0.5;
+        this.ir2.anchor.y = 0.5;
         this.physics.enable(this.ir2, Phaser.Physics.PHASER);
         this.ir2.alpha = .95;
         if (this.game.dayState === 'night' && this.game.infrared) {
@@ -1642,6 +1646,7 @@ DA5Game.game.prototype = {
     
     damagePlayer: function() {
         if (!this.damageImmune.running){
+            this.game.hurt.play('', 0, 0.1, false);
             if (this.game.hasShield)
                 this.shield.animations.play('shieldDown');
             else
@@ -1663,16 +1668,16 @@ DA5Game.game.prototype = {
         this.game.player.animations.play('normal');
     },
     
-    
-    
     collectFood: function(player, food) {
+        this.game.ring.play('', 0, 0.1, true);
         this.food.remove(food);
-        this.foodRespawnTimer.destroy();
+        this.objectRespawnTimer.destroy();
         this.updateHunger(false);
         this.game.numFood--;
     },
     
     collectResource: function(player, resource) {
+        this.game.ring.play('', 0, 0.1, true);
         this.resource.remove(resource);
         this.game.resourceCount++;
         this.updateResourceText();
@@ -1717,12 +1722,12 @@ DA5Game.game.prototype = {
             switch(this.game.playerHealth) {
                 case 4:
                     this.health5.alpha = 1;
-                    if (this.game.playerMaxhealth > 4)
+                    if (this.game.playerMaxHealth > 4)
                         this.game.playerHealth = 5;
                     break;
                 case 3:
                     this.health4.alpha = 1;
-                    if (this.game.playerMaxhealth > 3)
+                    if (this.game.playerMaxHealth > 3)
                         this.game.playerHealth = 4;
                     break;
                 case 2:
@@ -3207,8 +3212,8 @@ DA5Game.game.prototype = {
         this.thirstDrain = this.time.create(true);
         this.thirstDrain.add(this.game.thirstDecay, this.updateThirst, this, true);
         this.thirstGain = this.time.create(false);
-        this.foodRespawnTimer = this.time.create(true);
-        this.foodRespawnTimer.add(this.game.foodRespawn, this.updateFood, this);
+        this.objectRespawnTimer = this.time.create(true);
+        this.objectRespawnTimer.add(this.game.objectRespawn, this.updateFood, this);
         if (this.game.day >= 2) {       // Drones start on Day 2
             if (this.game.day >= 3){    // Turret starts on Day 3
                 // 5 Turret Fire Time Groups

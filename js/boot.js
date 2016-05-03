@@ -5,6 +5,8 @@ DA5Game.boot = function(game) {};
 DA5Game.boot.prototype = {
     preload: function() {
         this.load.image('preloaderBar', 'assets/img/boss/boss.png');
+        this.load.image('loading', 'assets/img/loading.png');
+        this.load.image('launching', 'assets/img/launching.png');
     },
     
     create: function() {

@@ -159,6 +159,8 @@ DA5Game.boss.prototype = {
         pulse.kill();
         if (this.lethalState) {
             if (!this.damageImmuneBoss.running){
+                if (!this.game.jab.isPlaying)
+                    this.game.jab.play('', 0, 0.1, false);
                 this.bossHealth--
                 if(this.bossHealth == 0) {
                     boss.kill();
@@ -916,6 +918,7 @@ DA5Game.boss.prototype = {
             this.game.shieldCount -= 1;
             this.updateConsumables();
             this.game.hasShield = true;
+            this.shield.frame = 0;
             this.shield.visible = true;
         }
     },
@@ -1114,17 +1117,17 @@ DA5Game.boss.prototype = {
         
         // respawns more food when the food is collected after a certain amount of time
         if (this.game.numFood < this.game.maxFood){
-            if (!this.foodRespawnTimer.running){
-                this.foodRespawnTimer = this.time.create(true);
-                this.foodRespawnTimer.add(this.game.foodRespawn, this.updateFood, this);
-                this.foodRespawnTimer.start();
+            if (!this.objectRespawnTimer.running){
+                this.objectRespawnTimer = this.time.create(true);
+                this.objectRespawnTimer.add(this.game.objectRespawn, this.updateFood, this);
+                this.objectRespawnTimer.start();
             }
         }
         
         if (this.game.numResource < this.game.maxResource){
             if (!this.resourceRespawnTimer.running){
                 this.resourceRespawnTimer = this.time.create(true);
-                this.resourceRespawnTimer.add(this.game.foodRespawn, this.updateResource, this);
+                this.resourceRespawnTimer.add(this.game.objectRespawn, this.updateResource, this);
                 this.resourceRespawnTimer.start();
             }
         }
@@ -1187,6 +1190,8 @@ DA5Game.boss.prototype = {
     },
     
     damagePlayer: function() {
+        if (!this.game.hurt.isPlaying)
+            this.game.hurt.play('', 0, 0.1, false);
         if (!this.damageImmune.running){
             if (this.game.hasShield)
                 this.shield.animations.play('shieldDown');
@@ -1209,13 +1214,15 @@ DA5Game.boss.prototype = {
     },
     
     collectFood: function(player, food) {
+        this.game.ring.play('', 0, 0.1, true);
         this.food.remove(food);
-        this.foodRespawnTimer.destroy();
+        this.objectRespawnTimer.destroy();
         this.updateHunger(false);
         this.game.numFood--;
     },
     
     collectResource: function(player, resource) {
+        this.game.ring.play('', 0, 0.1, true);
         this.resource.remove(resource);
         this.resourceRespawnTimer.destroy();
         this.game.resourceCount++;
@@ -1262,12 +1269,12 @@ DA5Game.boss.prototype = {
             switch(this.game.playerHealth) {
                 case 4:
                     this.health5.alpha = 1;
-                    if (this.game.playerMaxhealth > 4)
+                    if (this.game.playerMaxHealth > 4)
                         this.game.playerHealth = 5;
                     break;
                 case 3:
                     this.health4.alpha = 1;
-                    if (this.game.playerMaxhealth > 3)
+                    if (this.game.playerMaxHealth > 3)
                         this.game.playerHealth = 4;
                     break;
                 case 2:
@@ -1748,10 +1755,10 @@ DA5Game.boss.prototype = {
         this.thirstDrain = this.time.create(true);
         this.thirstDrain.add(this.game.thirstDecay, this.updateThirst, this, true);
         this.thirstGain = this.time.create(false);
-        this.foodRespawnTimer = this.time.create(true);
-        this.foodRespawnTimer.add(this.game.foodRespawn, this.updateFood, this);
+        this.objectRespawnTimer = this.time.create(true);
+        this.objectRespawnTimer.add(this.game.objectRespawn, this.updateFood, this);
         this.resourceRespawnTimer = this.time.create(true);
-        this.resourceRespawnTimer.add(this.game.foodRespawn, this.updateResource, this);    // this.game.foodRespawn will be used again
+        this.resourceRespawnTimer.add(this.game.objectRespawn, this.updateResource, this);    // this.game.objectRespawn will be used again
         
         // 5 Turret Fire Time Groups
         this.turretFire1 = this.time.create(true);            
