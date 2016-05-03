@@ -70,7 +70,7 @@ DA5Game.worldgen.prototype = {
         this.game.losingHealth = false;     // Is the player losing health albeit has no hunger or thirst?
         this.game.interact = false;         // Is the player pressing the interact key?
         this.game.isSlowed = false;         // Is the player on a slowing tile?
-        this.game.dayCycle = 60 * Phaser.Timer.SECOND;      // Time between each cycle
+        this.game.dayCycle = 30 * Phaser.Timer.SECOND;      // Time between each cycle
         this.game.pulseSpeed = 250;
         this.game.stunDuration = 5 * Phaser.Timer.SECOND;
         
