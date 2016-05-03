@@ -20,6 +20,14 @@ DA5Game.boss.prototype = {
         // TEST RESET
         //this.win = this.add.sprite((1 * this.game.posMult) + 8, (18 * this.game.posMult) + 8, 'win');
         //this.physics.enable(this.win, Phaser.Physics.ARCADE);
+        /* DEMO USE */
+        this.game.playerMaxHealth = 5;
+        this.game.playerHealth = 5;
+        this.game.playerMaxThirst = 5;
+        this.game.playerThirst = 5;
+        this.game.slot1 = 11;
+        this.game.slot2 = 9;
+        this.game.resourceCount = 500;
         
         this.initializeHUD();
         this.dialogueState = false;
@@ -927,7 +935,9 @@ DA5Game.boss.prototype = {
         if (this.game.pulseRounds > 0 && !this.craftState){
             this.game.pulseRounds--;
             this.updateConsumables();
-            this.pulseRound = this.pulse.create(this.game.player.x + 2, this.game.player.y + 2, 'pulse');
+            this.pulseRound = this.pulse.create(this.game.player.x, this.game.player.y, 'pulse');
+            this.pulseRound.anchor.x = 0.5;
+            this.pulseRound.anchor.y = 0.5;
             this.pulseRound.body.velocity.y = -this.game.pulseSpeed;
         }
     },
@@ -936,7 +946,9 @@ DA5Game.boss.prototype = {
         if (this.game.pulseRounds > 0 && !this.craftState){
             this.game.pulseRounds--;
             this.updateConsumables();
-            this.pulseRound = this.pulse.create(this.game.player.x + 2, this.game.player.y + 2, 'pulse');
+            this.pulseRound = this.pulse.create(this.game.player.x, this.game.player.y, 'pulse');
+            this.pulseRound.anchor.x = 0.5;
+            this.pulseRound.anchor.y = 0.5;
             this.pulseRound.body.velocity.y = this.game.pulseSpeed;
         }
     },
@@ -945,7 +957,9 @@ DA5Game.boss.prototype = {
         if (this.game.pulseRounds > 0 && !this.craftState){
             this.game.pulseRounds--;
             this.updateConsumables();
-            this.pulseRound = this.pulse.create(this.game.player.x + 2, this.game.player.y + 2, 'pulse');
+            this.pulseRound = this.pulse.create(this.game.player.x, this.game.player.y, 'pulse');
+            this.pulseRound.anchor.x = 0.5;
+            this.pulseRound.anchor.y = 0.5;
             this.pulseRound.body.velocity.x = -this.game.pulseSpeed;
         }
     },
@@ -954,7 +968,9 @@ DA5Game.boss.prototype = {
         if (this.game.pulseRounds > 0 && !this.craftState){
             this.game.pulseRounds--;
             this.updateConsumables();
-            this.pulseRound = this.pulse.create(this.game.player.x  + 2, this.game.player.y + 2, 'pulse');
+            this.pulseRound = this.pulse.create(this.game.player.x, this.game.player.y, 'pulse');
+            this.pulseRound.anchor.x = 0.5;
+            this.pulseRound.anchor.y = 0.5;
             this.pulseRound.body.velocity.x = this.game.pulseSpeed;
         }
     },

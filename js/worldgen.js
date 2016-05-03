@@ -83,7 +83,6 @@ DA5Game.worldgen.prototype = {
         }
         else
             this.game.dayState = 'night';
-        
         if (!this.game.bossState)
             this.setEvent();
         else

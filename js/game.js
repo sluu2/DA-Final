@@ -25,8 +25,8 @@ DA5Game.game.prototype = {
         this.playerInitialization();
         
         // TEST RESET
-        //this.win = this.add.sprite((1 * this.game.posMult) + 8, (18 * this.game.posMult) + 8, 'win');
-        //this.physics.enable(this.win, Phaser.Physics.ARCADE);
+        this.win = this.add.sprite((1 * this.game.posMult) + 8, (18 * this.game.posMult) + 8, 'win');
+        this.physics.enable(this.win, Phaser.Physics.ARCADE);
         
         this.initializeHUD();
         this.dialogueState = false;
@@ -48,7 +48,7 @@ DA5Game.game.prototype = {
         this.physics.arcade.overlap(this.game.player, this.sand, this.sandCollide, null, this);
         this.physics.arcade.overlap(this.game.player, this.lake, this.lakeCollide, null, this);
         this.physics.arcade.overlap(this.game.player, this.river, this.riverCollide, null, this);
-        this.physics.arcade.overlap(this.game.player, this.win, this.GameOver, null, this);
+        this.physics.arcade.overlap(this.game.player, this.win, this.goToBoss, null, this);
         this.physics.arcade.overlap(this.game.player, this.food, this.collectFood, null, this);
         this.physics.arcade.overlap(this.game.player, this.resource, this.collectResource, null, this);
         this.physics.arcade.overlap(this.game.player, this.supplyItem, this.collectSupplyItem, null, this);
@@ -151,6 +151,11 @@ DA5Game.game.prototype = {
     
     GameOver: function() {
         this.state.start('loseState');
+    },
+    
+    goToBoss: function(){
+        this.game.bossState = true;
+        this.state.start('worldgen');
     },
     
     /* ---------------------- EXTERNAL HELPER FUNCTIONS BEGIN HERE AND ONWARDS ---------------------- */
@@ -756,30 +761,29 @@ DA5Game.game.prototype = {
     },
     
     confirmOption: function() {
-        if (this.exitGameState){
-            this.game.paused = false;
-            this.state.start('startMenu');
-        }
-        else if (this.supplyState){
+        if (this.supplyState){
             this.supplyState = false;
             this.supplyPrompt.visible = false;
             this.slotState = true;
             this.slotPrompt.visible = true;
         }
+        else if (this.exitGameState){
+            this.game.paused = false;
+            this.state.start('startMenu');
+        }
     },
     
     declineOption: function() {
-        if (this.exitGameState){
-            this.exitMenu.visible = false;
-            this.exitGameState = false;
-            this.game.paused = false;
-        }
-        else if (this.supplyState){
+        if (this.supplyState){
             this.supplyState = false;
             this.supplyPrompt.visible = false;
             this.resumeTimers();
         }
-        
+        else if (this.exitGameState){
+            this.exitMenu.visible = false;
+            this.exitGameState = false;
+            this.game.paused = false;
+        }
     },
     
     escapeSequence: function() {
@@ -1138,7 +1142,9 @@ DA5Game.game.prototype = {
         if (this.game.pulseRounds > 0 && !this.craftState){
             this.game.pulseRounds--;
             this.updateConsumables();
-            this.pulseRound = this.pulse.create(this.game.player.x + 2, this.game.player.y + 2, 'pulse');
+            this.pulseRound = this.pulse.create(this.game.player.x, this.game.player.y, 'pulse');
+            this.pulseRound.anchor.x = 0.5;
+            this.pulseRound.anchor.y = 0.5;
             this.pulseRound.body.velocity.y = -this.game.pulseSpeed;
         }
     },
@@ -1147,7 +1153,9 @@ DA5Game.game.prototype = {
         if (this.game.pulseRounds > 0 && !this.craftState){
             this.game.pulseRounds--;
             this.updateConsumables();
-            this.pulseRound = this.pulse.create(this.game.player.x + 2, this.game.player.y + 2, 'pulse');
+            this.pulseRound = this.pulse.create(this.game.player.x, this.game.player.y, 'pulse');
+            this.pulseRound.anchor.x = 0.5;
+            this.pulseRound.anchor.y = 0.5;
             this.pulseRound.body.velocity.y = this.game.pulseSpeed;
         }
     },
@@ -1156,7 +1164,9 @@ DA5Game.game.prototype = {
         if (this.game.pulseRounds > 0 && !this.craftState){
             this.game.pulseRounds--;
             this.updateConsumables();
-            this.pulseRound = this.pulse.create(this.game.player.x + 2, this.game.player.y + 2, 'pulse');
+            this.pulseRound = this.pulse.create(this.game.player.x, this.game.player.y, 'pulse');
+            this.pulseRound.anchor.x = 0.5;
+            this.pulseRound.anchor.y = 0.5;
             this.pulseRound.body.velocity.x = -this.game.pulseSpeed;
         }
     },
@@ -1165,7 +1175,9 @@ DA5Game.game.prototype = {
         if (this.game.pulseRounds > 0 && !this.craftState){
             this.game.pulseRounds--;
             this.updateConsumables();
-            this.pulseRound = this.pulse.create(this.game.player.x  + 2, this.game.player.y + 2, 'pulse');
+            this.pulseRound = this.pulse.create(this.game.player.x, this.game.player.y, 'pulse');
+            this.pulseRound.anchor.x = 0.5;
+            this.pulseRound.anchor.y = 0.5;
             this.pulseRound.body.velocity.x = this.game.pulseSpeed;
         }
     },
